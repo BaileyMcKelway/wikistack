@@ -1,6 +1,8 @@
 const express = require("express");
 const morgan = require("morgan");
 const bodyParser = require("body-parser");
+const client = require("./db");
+const main = require('./views/main')
 
 const app = express();
 
@@ -10,12 +12,12 @@ app.use(bodyParser.urlencoded({extended: false}))
 
 
 app.get("/", (req, res) => {
-    console.log("Hello World")
+    res.send(main("HELLLOOOO"))
   })
 
 
 
-const PORT = 1337;
+const PORT = 3000;
 
 app.listen(PORT, () => {
 console.log(`App listening in port ${PORT}`);
