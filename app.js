@@ -1,17 +1,15 @@
 const express = require("express");
 const morgan = require("morgan");
 const bodyParser = require("body-parser");
-const { db } = require('./models');
-const main = require('./views/main')
+const { db, Page, User } = require('./models');
+
 
 const app = express();
 
 app.use(morgan("dev"));
 app.use(express.static(__dirname + "/public"));
 app.use(bodyParser.urlencoded({extended: false}))
-
-
-
+app.use(bodyParser.json());
 
 
 db.authenticate().
@@ -20,27 +18,26 @@ then(() => {
 })
 
 
-app.get("/", (req, res) => {
-    res.send(main("HELLLOOOO"))
-  })
+app.use("/wiki", require("./routes/wiki"));
+app.use("/users", require("./routes/user"));
 
+app.get('/', (req, res) => {
+    
+    res.redirect('/wiki');
+})
 
+// app.get("/", (req, res) => {
+//     res.send(main("HELLLOOOO"))
+// })
 
 const PORT = 3000;
 
+const init = async () => {
+    await User.sync();
+    await Page.sync();
+    app.listen(PORT, () => {
+      console.log(`Server is listening on port ${PORT}!`);
+    });
+  };
+  init();
 
-//const models = require('./models')
-
-
-// const init = async () => {
-//     await models.db.sync({force: true})
-//     app.listen(PORT, () => {
-//         console.log(`Server listening in port ${PORT}`);
-//     })
-// }
-
-// init();
-
-app.listen(PORT, () => {
-    console.log(`App listening in port ${PORT}`);
-})
